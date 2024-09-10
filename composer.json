@@ -1,0 +1,20 @@
+{
+    "name": "yipresser/wp-settings-api-helper",
+    "description": "A helper class to simplify WordPress Settings and creation of Settings page in WP plugins.",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "Yipresser\\WpSettingsApiHelper\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yipresser"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+		 "php": ">=7.2"
+		}
+}
