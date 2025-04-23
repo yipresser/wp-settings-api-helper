@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.0.2
+ * @version 1.0.1
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -60,10 +60,6 @@ abstract class WP_Settings_API_Helper {
      *
      */
     public $settings_sections = [];
-
-    public function __construct() {
-        add_action( 'admin_init', [ $this, 'setup' ] );
-    }
 
 	/**
 	 * Initial setup
