@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.1
+ * @version 1.0.1.1
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -18,11 +18,11 @@ abstract class WP_Settings_API_Helper {
      *
      * @var    array
      *
-     * @usage $settings_options = [
-     * 								['option_group',
-     *                                    'option_name',
-     * 								      'default'=>[] //default values for the option
-     * 								],
+     * @usage $settings_options = [[
+     * 								'option_group',
+     *                              'option_name',
+     * 								'default'=>[] //default values for the option
+     * 							],
      * 							 ];
      */
     public $settings_options;
@@ -161,10 +161,12 @@ abstract class WP_Settings_API_Helper {
                 }
                 break;
             case 'number':
+                $min = ! empty( $min ) ? ' min="'.absint($min).'"' : '';
+                $max = ! empty( $max ) ? ' max="'.absint($max).'"' : '';
                 echo '<input type="number" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' .
                      esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr(
                              $placeholder
-                    ) . '" class="regular-text '. esc_attr( $class ) . '" />';
+                    ) . '" class="regular-text '. esc_attr( $class ) . '"' . $min . $max . '/>';
                 if ( $desc ) {
                     echo '<p class="description">' . esc_html( $desc ) . '</p>';
                 }
