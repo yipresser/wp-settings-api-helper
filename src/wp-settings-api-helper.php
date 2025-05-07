@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.1.1
+ * @version 1.0.1.2
  *
  * @author Damien Oh <damien@yipresser.com>
  */
