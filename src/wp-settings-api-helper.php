@@ -174,6 +174,9 @@ abstract class WP_Settings_API_Helper {
             case 'number':
                 $min = ! empty( $min ) ? ' min="'.absint($min).'"' : '';
                 $max = ! empty( $max ) ? ' max="'.absint($max).'"' : '';
+                if ( empty($value) && !empty($default) ) {
+                    $value = $default;
+                }
                 $disable_el = '';
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
