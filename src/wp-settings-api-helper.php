@@ -154,6 +154,7 @@ abstract class WP_Settings_API_Helper {
         $defaults = [ 'id' => '', 'name' => '', 'placeholder' => '', 'value' => '', 'default' => '', 'class' => '', 'desc' => '' ];
         extract( wp_parse_args( $args['field'], $defaults ) );
         $value = ! empty($option[$name]) ? $option[$name] : '';
+        $disabled = $disabled ?? false;
         switch ( $type ) {
             case 'text':
                 if ( empty($value) && !empty($default) ) {
