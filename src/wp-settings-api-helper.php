@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.1.5
+ * @version 1.0.2.0
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -91,7 +91,7 @@ abstract class WP_Settings_API_Helper {
                 }
 
                 if ( ! empty( $section['fields'] ) && is_array( $section['fields'] ) ) {
-                    $option = get_option($section['option_name']);
+                    $option = get_option($section['option_name'], []);
                     foreach ( $section['fields'] as $field ) {
                         $field['option_name'] = $section['option_name'];
                         $field['option'] = $option;
@@ -151,10 +151,9 @@ abstract class WP_Settings_API_Helper {
 	 * @return void
 	 */
     public function render_field( $args ) {
-        $defaults = [ 'id' => '', 'name' => '', 'placeholder' => '', 'value' => '', 'default' => '', 'class' => '', 'desc' => '' ];
+        $defaults = [ 'id' => '', 'name' => '', 'placeholder' => '', 'value' => '', 'default' => '', 'class' => '', 'desc' => '', 'disabled' => false, 'min' => '', 'max' => '' ];
         extract( wp_parse_args( $args['field'], $defaults ) );
         $value = ! empty($option[$name]) ? $option[$name] : '';
-        $disabled = $disabled ?? false;
         switch ( $type ) {
             case 'text':
                 if ( empty($value) && !empty($default) ) {
@@ -164,10 +163,7 @@ abstract class WP_Settings_API_Helper {
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
                 }
-                echo '<input type="text" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' .
-                     esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr(
-                             $placeholder
-                    ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';
+                echo '<input type="text" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr($placeholder) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';
                 if ( $desc ) {
                     echo '<p class="description">' . esc_html( $desc ) . '</p>';
                 }
@@ -182,10 +178,7 @@ abstract class WP_Settings_API_Helper {
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
                 }
-                echo '<input type="number" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' .
-                     esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr(
-                             $placeholder
-                    ) . '" class="regular-text '. esc_attr( $class ) . '"' . $min . $max . $disable_el .'/>';
+                echo '<input type="number" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr($placeholder) . '" class="regular-text '. esc_attr( $class ) . '"' . $min . $max . $disable_el .'/>';
                 if ( $desc ) {
                     echo '<p class="description">' . esc_html( $desc ) . '</p>';
                 }
@@ -198,10 +191,7 @@ abstract class WP_Settings_API_Helper {
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
                 }
-                echo '<input type="email" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' .
-                     esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr(
-                             $placeholder
-                    ) . '" class="regular-text '. esc_attr( $class ) . '"' . $disable_el . '/>';
+                echo '<input type="email" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text '. esc_attr( $class ) . '"' . $disable_el . '/>';
                 if ( $desc ) {
                     echo '<p class="description">' . esc_html( $desc ) . '</p>';
                 }
@@ -211,10 +201,7 @@ abstract class WP_Settings_API_Helper {
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
                 }
-                echo '<input type="password" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="'
-                     . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' .
-                     esc_attr(
-                             $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';
+                echo '<input type="password" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';
                 if ( $desc ) {
                     echo '<p class="description">' . esc_html( $desc ) . '</p>';
                 }
@@ -227,9 +214,7 @@ abstract class WP_Settings_API_Helper {
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
                 }
-                echo '<textarea name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' .
-                     esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="5" cols="60" class="'
-                     . esc_attr( $class ) . '"' . $disable_el . '>' . esc_html( stripslashes( $value ) ) . '</textarea>';
+                echo '<textarea name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="5" cols="60" class="' . esc_attr( $class ) . '"' . $disable_el . '>' . esc_html( stripslashes( $value ) ) . '</textarea>';
                 if ( $desc ) {
                     echo '<p class="description">' . esc_html( $desc ) . '</p>';
                 }
@@ -239,16 +224,14 @@ abstract class WP_Settings_API_Helper {
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
                 }
-                echo '<select name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr(
-                        $id ) . '" class="' . esc_attr( $class ). '"'. $disable_el .'>';
+                echo '<select name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class ). '"'. $disable_el .'>';
                 foreach ( $choices as $cval => $label ) {
                     if ( empty($value)) {
                         $selected = selected( $cval, $default, false );
                     } else {
                         $selected = selected( $cval, $value, false );
                     }
-                    echo '<option value="' . esc_attr( $cval ). '" ' . $selected . '>' .
-                         esc_html( $label ) . '</option>';
+                    echo '<option value="' . esc_attr( $cval ). '" ' . $selected . '>' . esc_html( $label ) . '</option>';
                 }
                 echo '</select>';
                 if ( $desc ) {
@@ -269,17 +252,25 @@ abstract class WP_Settings_API_Helper {
                 }
                 break;
             case 'hidden':
-                echo '<input type="hidden" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' .
-                     esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" />';
+                echo '<input type="hidden" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" />';
                 break;
             case 'checkbox':
+                $default = ! empty( $default ) ? absint($default) : 0;
+                $value = ! empty( $value ) ? $value : $default;
+                $disable_el = '';
+                if (!empty($disabled)) {
+                    $disable_el = ' disabled="disabled"';
+                }
+                echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr($name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr(  $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /> ' . esc_html( $desc ) . '</label>';
+                break;
+            case 'slider-checkbox': // include an additional div call slider. CSS styling not included.
                 $default = ! empty( $default ) ? absint($default) : 0;
                 $value = ! empty( $value ) ? $value : $default;
                 $disable_el = '';
                 if ($disabled) {
                     $disable_el = ' disabled="disabled"';
                 }
-                echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr($name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr(  $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /> ' . esc_html( $desc ) . '</label>';
+                echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr($name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr(  $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /><div class="slider"></div> ' . esc_html( $desc ) . '</label>';
                 break;
             case 'checkboxes':
                 foreach ( $choices as $ckey => $cval ) {
@@ -301,8 +292,7 @@ abstract class WP_Settings_API_Helper {
                             $checked = ' checked="checked"';
                         }
                     }
-                    echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) .
-                         '][]" id="' . esc_attr( $id ) . '_' . esc_attr( $ckey ) . '" value="' . esc_attr( $ckey ) . '"' . esc_attr( $cb_class ) . esc_attr( $checked ) . ' /> ' . esc_html( $cval ) . '</label><br />';
+                    echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . '][]" id="' . esc_attr( $id ) . '_' . esc_attr( $ckey ) . '" value="' . esc_attr( $ckey ) . '"' . esc_attr( $cb_class ) . esc_attr( $checked ) . ' /> ' . esc_html( $cval ) . '</label><br />';
                 }
                 if ( $desc ) {
                     echo '<p class="description">' . esc_html( $desc ) . '</p>';
