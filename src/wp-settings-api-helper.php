@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.0
+ * @version 1.0.3.1
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -278,13 +278,15 @@ abstract class WP_Settings_API_Helper {
 				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /> ' . esc_html( $desc ) . '</label>';
 				break;
 			case 'slider-checkbox': // include an additional div call slider. CSS styling not included.
-				$default    = ! empty( $default ) ? absint( $default ) : 0;
-				$value      = ! empty( $value ) ? $value : $default;
-				$disable_el = '';
+				$default              = ! empty( $default ) ? absint( $default ) : 0;
+				$value                = ! empty( $value ) ? $value : $default;
+				$disable_el           = '';
+				$disable_slider_class = '';
 				if ( $disabled ) {
-					$disable_el = ' disabled="disabled"';
+					$disable_el           = ' disabled="disabled"';
+					$disable_slider_class = ' disabled';
 				}
-				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /><div class="slider"></div> ' . esc_html( $desc ) . '</label>';
+				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /><div class="slider' . esc_attr( $disable_slider_class ) . '"></div> ' . esc_html( $desc ) . '</label>';
 				break;
 			case 'checkboxes':
 				foreach ( $choices as $ckey => $cval ) {
@@ -373,10 +375,16 @@ abstract class WP_Settings_API_Helper {
 
 			$id_attr = $id ? ' id="' . esc_attr( $id ) . '"' : '';
 			$form    = '<form ' . $id_attr . $attributes . ' action="' . esc_url( admin_url( 'options.php' ), null, '&' ) . '" method="post">';
-			echo $form;
+			echo $form; // phpcs:ignore
 			settings_fields( $section );
 			do_settings_sections( $section );
-			submit_button( 'Save Changes' );
+			$add_submit_btn = true;
+			if ( isset( $other_attributes['remove_submit_button'] ) && true === (bool) $other_attributes['remove_submit_button'] ) {
+				$add_submit_btn = false;
+			}
+			if ( $add_submit_btn ) {
+				submit_button( 'Save Changes' );
+			}
 			echo '</form>';
 		}
 	}
