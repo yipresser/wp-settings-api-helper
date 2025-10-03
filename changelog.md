@@ -2,6 +2,10 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 1.0.3.2 - 2025-10-03
+
+- added disabled attribute option to radio field.
+
 ## 1.0.3.1 - 2025-10-02
 
 - added attribute option to remove submit button when rendering fields.

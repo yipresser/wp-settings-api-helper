@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.1
+ * @version 1.0.3.2
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -253,13 +253,17 @@ abstract class WP_Settings_API_Helper {
 				}
 				break;
 			case 'radio':
+				$disable_el = '';
+				if ( ! empty( $disabled ) ) {
+					$disable_el = ' disabled="disabled"';
+				}
 				foreach ( $choices as $cval => $label ) {
 					if ( empty( $value ) ) {
 						$checked = checked( $cval, $default, false );
 					} else {
 						$checked = checked( $cval, $value, false );
 					}
-					echo '<label><input type="radio" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '_' . esc_attr( $cval ) . '" value="' . esc_attr( $cval ) . '" class="' . esc_attr( $class ) . '" ' . $checked . ' /> ' . esc_html( $label ) . '</label><br />';
+					echo '<label><input type="radio" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '_' . esc_attr( $cval ) . '" value="' . esc_attr( $cval ) . '" class="' . esc_attr( $class ) . '" ' . $checked . $disable_el . ' /> ' . esc_html( $label ) . '</label><br />';
 				}
 				if ( $desc ) {
 					echo '<p class="description">' . esc_html( $desc ) . '</p>';
