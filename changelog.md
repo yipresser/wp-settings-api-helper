@@ -2,6 +2,10 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 1.0.3.3 - 2025-10-30
+
+- changed field description escape mode from 'esc_html' to 'wp_kses_post' to allow html tags in the description.
+
 ## 1.0.3.2 - 2025-10-03
 
 - added disabled attribute option to radio field.
