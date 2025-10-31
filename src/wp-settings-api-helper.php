@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.3
+ * @version 1.0.3.4
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -280,7 +280,7 @@ abstract class WP_Settings_API_Helper {
 				if ( ! empty( $disabled ) ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /> <p class="description">' . wp_kses_post( $desc ) . '</p></label>';
+				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /> <span class="description">' . wp_kses_post( $desc ) . '</span></label>';
 				break;
 			case 'slider-checkbox': // include an additional div call slider. CSS styling not included.
 				$default              = ! empty( $default ) ? absint( $default ) : 0;

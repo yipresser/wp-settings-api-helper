@@ -2,6 +2,10 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 1.0.3.4 - 2025-10-31
+
+- bug fix: changed description tag for checkbox field from <p> to <span>
+
 ## 1.0.3.3 - 2025-10-30
 
 - changed field description escape mode from 'esc_html' to 'wp_kses_post' to allow html tags in the description.
