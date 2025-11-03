@@ -2,6 +2,10 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 1.0.3.6 - 2025-11-03
+
+- bug fix: minor sanitization bug fix
+
 ## 1.0.3.5 - 2025-11-03
 
 - bug fix: added label text for checkbox. Moved description tag for checkbox to its own field

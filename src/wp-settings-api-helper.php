@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.5
+ * @version 1.0.3.6
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -122,7 +122,7 @@ abstract class WP_Settings_API_Helper {
 			foreach ( $this->settings_sections as $section ) {
 				if ( $section['id'] === $args['id'] ) {
 					if ( isset( $section['description'] ) ) {
-						echo '<p>' . $section['description'] . '</p>';
+						echo '<p>' . wp_kses_post( $section['description'] ) . '</p>';
 					}
 					break;
 				}
@@ -328,8 +328,8 @@ abstract class WP_Settings_API_Helper {
 				wp_dropdown_pages(
 					[
 						'echo'              => 1,
-						'name'              => $option_name . '[' . $name . ']',
-						'id'                => $id,
+						'name'              => esc_attr( $option_name . '[' . $name . ']' ),
+						'id'                => esc_attr( $id ),
 						'selected'          => esc_attr( $value ),
 						'show_option_none'  => 'Choose a page',
 						'option_none_value' => '-1',
