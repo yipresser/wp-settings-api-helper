@@ -2,6 +2,11 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 1.0.3.5 - 2025-11-03
+
+- bug fix: added label text for checkbox. Moved description tag for checkbox to its own field
+- bug fix: removed inproper support for file field
+
 ## 1.0.3.4 - 2025-10-31
 
 - bug fix: changed description tag for checkbox field from <p> to <span>

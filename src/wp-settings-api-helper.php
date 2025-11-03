@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.4
+ * @version 1.0.3.5
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -61,6 +61,7 @@ abstract class WP_Settings_API_Helper {
 	 *      callback => 'function name, for "callback" type only',
 	 *      param => 'additional parameter to pass to callback function',
 	 *      label_for => 'label for field, should be the same as id',
+	 *      label => label text for checkbox,
 	 *  ],
 	 * ]]
 	 */
@@ -165,7 +166,7 @@ abstract class WP_Settings_API_Helper {
 			'disabled'    => false,
 			'min'         => '',
 			'max'         => '',
-			'accepts'     => 'application/JSON',
+			'label'       => '',
 		];
 		extract( wp_parse_args( $args['field'], $defaults ) );  // phpcs:ignore
 		$value = ! empty( $option[ $name ] ) ? $option[ $name ] : '';
@@ -178,7 +179,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="text" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';
+				echo '<input type="text" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '/>';
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -193,7 +194,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="number" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $min . $max . $disable_el . '/>';
+				echo '<input type="number" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $min ) . esc_attr( $max ) . esc_attr( $disable_el ) . '/>';
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -206,7 +207,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="email" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';
+				echo '<input type="email" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '/>';
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -216,7 +217,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="password" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';
+				echo '<input type="password" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '/>';
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -229,7 +230,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<textarea name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="5" cols="60" class="' . esc_attr( $class ) . '"' . $disable_el . '>' . esc_html( stripslashes( $value ) ) . '</textarea>';
+				echo '<textarea name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="5" cols="60" class="' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '>' . esc_html( stripslashes( $value ) ) . '</textarea>';
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -239,14 +240,14 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<select name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class ) . '"' . $disable_el . '>';
+				echo '<select name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '>';
 				foreach ( $choices as $cval => $label ) {
 					if ( empty( $value ) ) {
 						$selected = selected( $cval, $default, false );
 					} else {
 						$selected = selected( $cval, $value, false );
 					}
-					echo '<option value="' . esc_attr( $cval ) . '" ' . $selected . '>' . esc_html( $label ) . '</option>';
+					echo '<option value="' . esc_attr( $cval ) . '" ' . esc_attr( $selected ) . '>' . esc_html( $label ) . '</option>';
 				}
 				echo '</select>';
 				if ( $desc ) {
@@ -258,13 +259,13 @@ abstract class WP_Settings_API_Helper {
 				if ( ! empty( $disabled ) ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				foreach ( $choices as $cval => $label ) {
+				foreach ( $choices as $cval => $clabel ) {
 					if ( empty( $value ) ) {
 						$checked = checked( $cval, $default, false );
 					} else {
 						$checked = checked( $cval, $value, false );
 					}
-					echo '<label><input type="radio" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '_' . esc_attr( $cval ) . '" value="' . esc_attr( $cval ) . '" class="' . esc_attr( $class ) . '" ' . $checked . $disable_el . ' /> ' . wp_kses_post( $label ) . '</label><br />';
+					echo '<label><input type="radio" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '_' . esc_attr( $cval ) . '" value="' . esc_attr( $cval ) . '" class="' . esc_attr( $class ) . '" ' . esc_attr( $checked ) . esc_attr( $disable_el ) . ' /> ' . wp_kses_post( $clabel ) . '</label><br />';
 				}
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
@@ -276,11 +277,15 @@ abstract class WP_Settings_API_Helper {
 			case 'checkbox':
 				$default    = ! empty( $default ) ? absint( $default ) : 0;
 				$value      = ! empty( $value ) ? $value : $default;
+				$label      = ! empty( $label ) ? $label : '';
 				$disable_el = '';
 				if ( ! empty( $disabled ) ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /> <span class="description">' . wp_kses_post( $desc ) . '</span></label>';
+				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . esc_attr( $disable_el ) . ' /> ' . esc_html( $label ) . '</label>';
+				if ( $desc ) {
+					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
+				}
 				break;
 			case 'slider-checkbox': // include an additional div call slider. CSS styling not included.
 				$default              = ! empty( $default ) ? absint( $default ) : 0;
@@ -291,7 +296,7 @@ abstract class WP_Settings_API_Helper {
 					$disable_el           = ' disabled="disabled"';
 					$disable_slider_class = ' disabled';
 				}
-				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /><div class="slider' . esc_attr( $disable_slider_class ) . '"></div><p class="description">' . wp_kses_post( $desc ) . '</p></label>';
+				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . esc_attr( $disable_el ) . ' /><div class="slider' . esc_attr( $disable_slider_class ) . '"></div><p class="description">' . wp_kses_post( $desc ) . '</p></label>';
 				break;
 			case 'checkboxes':
 				foreach ( $choices as $ckey => $cval ) {
@@ -320,9 +325,9 @@ abstract class WP_Settings_API_Helper {
 				break;
 			case 'dropdown_pages':
 				$value = ! empty( $value ) ? $value : 0;
-				echo wp_dropdown_pages(
+				wp_dropdown_pages(
 					[
-						'echo'              => 0,
+						'echo'              => 1,
 						'name'              => $option_name . '[' . $name . ']',
 						'id'                => $id,
 						'selected'          => esc_attr( $value ),
@@ -330,20 +335,6 @@ abstract class WP_Settings_API_Helper {
 						'option_none_value' => '-1',
 					]
 				);
-				if ( $desc ) {
-					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
-				}
-				break;
-			case 'file':
-				$disable_el = '';
-				if ( $disabled ) {
-					$disable_el = ' disabled="disabled"';
-				}
-				$accepts_el = '';
-				if ( $accepts ) {
-					$accepts_el = 'accept="'.$accepts . '"';
-				}
-				echo '<input type="file" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $accepts_el . ' ' . $disable_el . '/>';
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
