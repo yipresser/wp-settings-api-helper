@@ -2,9 +2,10 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
-## 1.0.3.6 - 2025-11-03
+## 1.0.3.7 - 2025-11-03
 
 - bug fix: minor sanitization bug fix
+- bug fix: added label text for slider-checkbox. Moved description tag for checkbox to its own field
 
 ## 1.0.3.5 - 2025-11-03
 

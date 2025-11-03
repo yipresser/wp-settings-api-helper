@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.6
+ * @version 1.0.3.7
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -290,13 +290,17 @@ abstract class WP_Settings_API_Helper {
 			case 'slider-checkbox': // include an additional div call slider. CSS styling not included.
 				$default              = ! empty( $default ) ? absint( $default ) : 0;
 				$value                = ! empty( $value ) ? $value : $default;
+				$label                = ! empty( $label ) ? $label : '';
 				$disable_el           = '';
 				$disable_slider_class = '';
 				if ( $disabled ) {
 					$disable_el           = ' disabled="disabled"';
 					$disable_slider_class = ' disabled';
 				}
-				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . esc_attr( $disable_el ) . ' /><div class="slider' . esc_attr( $disable_slider_class ) . '"></div><p class="description">' . wp_kses_post( $desc ) . '</p></label>';
+				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . esc_attr( $disable_el ) . ' /><div class="slider' . esc_attr( $disable_slider_class ) . '"></div><span>' . wp_kses_post( $label ) . '</span></label>';
+				if ( $desc ) {
+					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
+				}
 				break;
 			case 'checkboxes':
 				foreach ( $choices as $ckey => $cval ) {
