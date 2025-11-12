@@ -4,7 +4,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.7
+ * @version 1.1.0
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -42,7 +42,7 @@ abstract class WP_Settings_API_Helper {
 	 *  menu_slug => 'menu slug for registering section',
 	 *  option_name => 'the name of the variable to be saved to the Options database,
 	 *  fields => [
-	 *      type => (text|number|email|hidden|select|checkbox|checkboxes|slider-checkbox|radio|textarea|password|dropdown_pages|file|callback),
+	 *      type => (text|number|email|hidden|select|checkbox|checkboxes|slider-checkbox|radio|textarea|password|dropdown_pages|file|code-editor|callback),
 	 *      title => 'Title for this field',
 	 *      id => 'id attribute for this field',
 	 *      name => 'input name attribute for this field',
@@ -339,6 +339,46 @@ abstract class WP_Settings_API_Helper {
 						'option_none_value' => '-1',
 					]
 				);
+				if ( $desc ) {
+					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
+				}
+				break;
+			case 'code-editor':
+				if ( empty( $value ) && ! empty( $default ) ) {
+					$value = $default;
+				}
+				$disable_el = '';
+				if ( $disabled ) {
+					$disable_el = ' disabled="disabled"';
+				}
+				$code_editor = wp_enqueue_code_editor(
+					[
+						'type'       => 'css',
+						'codemirror' => [
+							'mode'             => [
+								'name'      => 'markdown',
+								'startOpen' => true,
+							],
+							'inputStyle'       => 'textarea',
+							'matchBrackets'    => true,
+							'lint'             => true,
+							'direction'        => 'ltr',
+							'colorpicker'      => [ 'mode' => 'edit' ],
+							'foldOptions'      => [ 'widget' => '...' ],
+							'continueComments' => true,
+						],
+					]
+				);
+				if ( false !== $code_editor ) {
+					wp_add_inline_script(
+						'wp-codemirror',
+						sprintf(
+							'jQuery( function() { wp.codeEditor.initialize( "' . esc_attr( $id ) . '", %s ); } );',
+							wp_json_encode( $code_editor )
+						)
+					);
+				}
+				echo '<textarea name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="5" cols="60" class="' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '>' . esc_html( stripslashes( $value ) ) . '</textarea>';
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}

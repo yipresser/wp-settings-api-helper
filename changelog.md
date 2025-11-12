@@ -2,6 +2,9 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 1.1.0 - 2025-11-12
+- added code-editor field.
+
 ## 1.0.3.7 - 2025-11-03
 
 - bug fix: minor sanitization bug fix
