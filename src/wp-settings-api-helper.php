@@ -1,10 +1,16 @@
 <?php
+/**
+ * Yipresser WP Settings API Helper
+ *
+ * @package Yipresser\WpSettingsApiHelper
+ */
+
 namespace Yipresser\WpSettingsApiHelper;
 
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.0.3.7
+ * @version 1.0.4
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -131,8 +137,12 @@ abstract class WP_Settings_API_Helper {
 	}
 
 	/**
+	 * Placeholder function for sanitizing saved options.
 	 *
-	 * This is a placeholder function for sanitizing saved options.
+	 * WARNING: This base implementation performs NO sanitization and returns data as-is.
+	 * You MUST override this method in your child class to sanitize and validate all
+	 * option values before they are saved to the database. Failure to do so may result
+	 * in unsanitized data being stored.
 	 *
 	 * @param array $option Saved options from Settings page.
 	 *
@@ -168,8 +178,25 @@ abstract class WP_Settings_API_Helper {
 			'max'         => '',
 			'label'       => '',
 		];
-		extract( wp_parse_args( $args['field'], $defaults ) );  // phpcs:ignore
-		$value = ! empty( $option[ $name ] ) ? $option[ $name ] : '';
+		// Explicit variable assignment instead of extract() to prevent scope injection.
+		$parsed      = wp_parse_args( $args['field'], $defaults );
+		$id          = isset( $parsed['id'] ) ? sanitize_key( $parsed['id'] ) : '';
+		$name        = isset( $parsed['name'] ) ? sanitize_key( $parsed['name'] ) : '';
+		$type        = isset( $parsed['type'] ) ? sanitize_key( $parsed['type'] ) : '';
+		$placeholder = isset( $parsed['placeholder'] ) ? $parsed['placeholder'] : '';
+		$default     = isset( $parsed['default'] ) ? $parsed['default'] : '';
+		$class       = isset( $parsed['class'] ) ? $parsed['class'] : '';
+		$desc        = isset( $parsed['desc'] ) ? $parsed['desc'] : '';
+		$disabled    = ! empty( $parsed['disabled'] );
+		$min         = isset( $parsed['min'] ) ? $parsed['min'] : '';
+		$max         = isset( $parsed['max'] ) ? $parsed['max'] : '';
+		$label       = isset( $parsed['label'] ) ? $parsed['label'] : '';
+		$option_name = isset( $parsed['option_name'] ) ? $parsed['option_name'] : '';
+		$option      = isset( $parsed['option'] ) && is_array( $parsed['option'] ) ? $parsed['option'] : [];
+		$choices     = isset( $parsed['choices'] ) && is_array( $parsed['choices'] ) ? $parsed['choices'] : [];
+		$callback    = isset( $parsed['callback'] ) ? $parsed['callback'] : null;
+		$param       = isset( $parsed['param'] ) ? $parsed['param'] : null;
+		$value       = ! empty( $option[ $name ] ) ? $option[ $name ] : '';
 		switch ( $type ) {
 			case 'text':
 				if ( empty( $value ) && ! empty( $default ) ) {
@@ -179,7 +206,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="text" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '/>';
+				echo '<input type="text" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -194,7 +221,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="number" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $min ) . esc_attr( $max ) . esc_attr( $disable_el ) . '/>';
+				echo '<input type="number" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $min ) . esc_attr( $max ) . $disable_el . '/>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -207,7 +234,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="email" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '/>';
+				echo '<input type="email" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -217,7 +244,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<input type="password" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '/>';
+				echo '<input type="password" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -230,7 +257,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<textarea name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="5" cols="60" class="' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '>' . esc_html( stripslashes( $value ) ) . '</textarea>';
+				echo '<textarea name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '" rows="5" cols="60" class="' . esc_attr( $class ) . '"' . $disable_el . '>' . esc_html( stripslashes( $value ) ) . '</textarea>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -240,7 +267,7 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<select name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class ) . '"' . esc_attr( $disable_el ) . '>';
+				echo '<select name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class ) . '"' . $disable_el . '>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				foreach ( $choices as $cval => $label ) {
 					if ( empty( $value ) ) {
 						$selected = selected( $cval, $default, false );
@@ -265,7 +292,7 @@ abstract class WP_Settings_API_Helper {
 					} else {
 						$checked = checked( $cval, $value, false );
 					}
-					echo '<label><input type="radio" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '_' . esc_attr( $cval ) . '" value="' . esc_attr( $cval ) . '" class="' . esc_attr( $class ) . '" ' . esc_attr( $checked ) . esc_attr( $disable_el ) . ' /> ' . wp_kses_post( $clabel ) . '</label><br />';
+					echo '<label><input type="radio" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '_' . esc_attr( $cval ) . '" value="' . esc_attr( $cval ) . '" class="' . esc_attr( $class ) . '" ' . esc_attr( $checked ) . $disable_el . ' /> ' . wp_kses_post( $clabel ) . '</label><br />';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				}
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
@@ -282,7 +309,7 @@ abstract class WP_Settings_API_Helper {
 				if ( ! empty( $disabled ) ) {
 					$disable_el = ' disabled="disabled"';
 				}
-				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . esc_attr( $disable_el ) . ' /> ' . esc_html( $label ) . '</label>';
+				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /> ' . esc_html( $label ) . '</label>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -297,7 +324,7 @@ abstract class WP_Settings_API_Helper {
 					$disable_el           = ' disabled="disabled"';
 					$disable_slider_class = ' disabled';
 				}
-				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . esc_attr( $disable_el ) . ' /><div class="slider' . esc_attr( $disable_slider_class ) . '"></div><span>' . wp_kses_post( $label ) . '</span></label>';
+				echo '<label><input type="checkbox" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="1" class="' . esc_attr( $class ) . '" ' . checked( 1, $value, false ) . $disable_el . ' /><div class="slider' . esc_attr( $disable_slider_class ) . '"></div><span>' . wp_kses_post( $label ) . '</span></label>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
@@ -344,7 +371,8 @@ abstract class WP_Settings_API_Helper {
 				}
 				break;
 			case 'callback':
-				if ( isset( $callback ) ) {
+				// Only invoke if $callback is explicitly a valid, callable reference.
+				if ( ! empty( $callback ) && is_callable( $callback ) ) {
 					if ( ! empty( $param ) ) {
 						call_user_func( $callback, $args['field'], $param );
 					} else {
@@ -383,7 +411,7 @@ abstract class WP_Settings_API_Helper {
 			$attributes = '';
 			if ( ! empty( $other_attributes ) ) {
 				foreach ( $other_attributes as $attribute => $value ) {
-					$attributes .= $attribute . '="' . esc_attr( $value ) . '" '; // Trailing space is important.
+					$attributes .= sanitize_key( $attribute ) . '="' . esc_attr( $value ) . '" '; // Trailing space is important.
 				}
 			}
 
