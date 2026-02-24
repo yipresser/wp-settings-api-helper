@@ -1,12 +1,13 @@
 # Changelog
 
 All notable changes to `wp-settings` will be documented in this file
-
-
-## 1.0.4.0 - 2026-02-24
+## 1.1.1 - 2026-02-24
 
 - Bug fix: fixed callback vulnerability 
 - Bug fix: added WARNING comment for sanitize_settings
+
+## 1.1.0 - 2025-11-12
+- added code-editor field.
 
 ## 1.0.3.7 - 2025-11-03
 
