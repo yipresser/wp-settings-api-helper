@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to `wp-settings` will be documented in this file
+## 1.1.2 - 2026-03-26
+
+- Added: a new URL field type
+
 ## 1.1.1 - 2026-02-24
 
 - Bug fix: fixed callback vulnerability 

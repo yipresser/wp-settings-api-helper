@@ -10,7 +10,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.1.1
+ * @version 1.1.2
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -48,7 +48,7 @@ abstract class WP_Settings_API_Helper {
 	 *  menu_slug => 'menu slug for registering section',
 	 *  option_name => 'the name of the variable to be saved to the Options database,
 	 *  fields => [
-	 *      type => (text|number|email|hidden|select|checkbox|checkboxes|slider-checkbox|radio|textarea|password|dropdown_pages|file|code-editor|callback),
+	 *      type => (text|url|number|email|hidden|select|checkbox|checkboxes|slider-checkbox|radio|textarea|password|dropdown_pages|file|code-editor|callback),
 	 *      title => 'Title for this field',
 	 *      id => 'id attribute for this field',
 	 *      name => 'input name attribute for this field',
@@ -207,6 +207,19 @@ abstract class WP_Settings_API_Helper {
 					$disable_el = ' disabled="disabled"';
 				}
 				echo '<input type="text" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
+				if ( $desc ) {
+					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
+				}
+				break;
+			case 'url':
+				if ( empty( $value ) && ! empty( $default ) ) {
+					$value = $default;
+				}
+				$disable_el = '';
+				if ( $disabled ) {
+					$disable_el = ' disabled="disabled"';
+				}
+				echo '<input type="url" name="' . esc_attr( $option_name ) . '[' . esc_attr( $name ) . ']" id="' . esc_attr( $id ) . '" value="' . esc_attr( stripslashes( $value ) ) . '" placeholder="' . esc_attr( $placeholder ) . '" class="regular-text ' . esc_attr( $class ) . '"' . $disable_el . '/>';  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $disable_el is a hardcoded safe string.
 				if ( $desc ) {
 					echo '<p class="description">' . wp_kses_post( $desc ) . '</p>';
 				}
