@@ -10,7 +10,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.1.2
+ * @version 1.1.3
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -66,6 +66,8 @@ abstract class WP_Settings_API_Helper {
 	 *      placeholder => 'placeholder value for this field (optional)',
 	 *      callback => 'function name, for "callback" type only',
 	 *      param => 'additional parameter to pass to callback function',
+	 *      code_type => 'mime-like editor type for code-editor fields (css|text/javascript|application/x-httpd-php|text/html, etc)',
+	 *      code_theme => 'CodeMirror theme slug for code-editor fields',
 	 *      label_for => 'label for field, should be the same as id',
 	 *      label => label text for checkbox,
 	 *  ],
@@ -177,6 +179,8 @@ abstract class WP_Settings_API_Helper {
 			'min'         => '',
 			'max'         => '',
 			'label'       => '',
+			'code_type'   => 'text/css',
+			'code_theme'  => '',
 		];
 		// Explicit variable assignment instead of extract() to prevent scope injection.
 		$parsed      = wp_parse_args( $args['field'], $defaults );
@@ -191,6 +195,8 @@ abstract class WP_Settings_API_Helper {
 		$min         = isset( $parsed['min'] ) ? $parsed['min'] : '';
 		$max         = isset( $parsed['max'] ) ? $parsed['max'] : '';
 		$label       = isset( $parsed['label'] ) ? $parsed['label'] : '';
+		$code_type   = isset( $parsed['code_type'] ) ? sanitize_text_field( $parsed['code_type'] ) : 'text/css';
+		$code_theme  = isset( $parsed['code_theme'] ) ? sanitize_key( $parsed['code_theme'] ) : '';
 		$option_name = isset( $parsed['option_name'] ) ? $parsed['option_name'] : '';
 		$option      = isset( $parsed['option'] ) && is_array( $parsed['option'] ) ? $parsed['option'] : [];
 		$choices     = isset( $parsed['choices'] ) && is_array( $parsed['choices'] ) ? $parsed['choices'] : [];
@@ -391,14 +397,11 @@ abstract class WP_Settings_API_Helper {
 				if ( $disabled ) {
 					$disable_el = ' disabled="disabled"';
 				}
+				$code_type   = $this->normalize_code_editor_type( $code_type );
 				$code_editor = wp_enqueue_code_editor(
 					[
-						'type'       => 'css',
+						'type'       => $code_type,
 						'codemirror' => [
-							'mode'             => [
-								'name'      => 'markdown',
-								'startOpen' => true,
-							],
 							'inputStyle'       => 'textarea',
 							'matchBrackets'    => true,
 							'lint'             => true,
@@ -410,6 +413,9 @@ abstract class WP_Settings_API_Helper {
 					]
 				);
 				if ( false !== $code_editor ) {
+					if ( ! empty( $code_theme ) ) {
+						$code_editor['codemirror']['theme'] = $code_theme;
+					}
 					wp_add_inline_script(
 						'wp-codemirror',
 						sprintf(
@@ -482,5 +488,41 @@ abstract class WP_Settings_API_Helper {
 			}
 			echo '</form>';
 		}
+	}
+
+	/**
+	 * Normalize shorthand code editor types to WordPress-friendly MIME strings.
+	 *
+	 * @since 1.1.3
+	 *
+	 * @param string $code_type Requested code type.
+	 *
+	 * @return string
+	 */
+	protected function normalize_code_editor_type( $code_type ) {
+		$map = [
+			'css'        => 'text/css',
+			'scss'       => 'text/x-scss',
+			'sass'       => 'text/x-sass',
+			'less'       => 'text/x-less',
+			'javascript' => 'text/javascript',
+			'js'         => 'text/javascript',
+			'json'       => 'application/json',
+			'html'       => 'text/html',
+			'xml'        => 'application/xml',
+			'markdown'   => 'text/x-markdown',
+			'md'         => 'text/x-markdown',
+			'php'        => 'application/x-httpd-php',
+		];
+
+		if ( isset( $map[ $code_type ] ) ) {
+			return $map[ $code_type ];
+		}
+
+		if ( false !== strpos( $code_type, '/' ) ) {
+			return $code_type;
+		}
+
+		return 'text/css';
 	}
 }

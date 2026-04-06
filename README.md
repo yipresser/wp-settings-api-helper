@@ -106,6 +106,7 @@ The `type` key in your field configuration supports the following values:
 - `email`
 - `password`
 - `textarea`
+- `code-editor` (supports optional `code_type` and `code_theme`)
 - `select` (requires a `choices` array `['value' => 'Label']`)
 - `radio` (requires a `choices` array)
 - `checkbox` (optional `label` for text next to checkbox)
@@ -128,6 +129,34 @@ The `type` key in your field configuration supports the following values:
     ],
     'default' => 'light'
 ]
+```
+
+### Example Code Editor Field
+```php
+[
+    'type'       => 'code-editor',
+    'title'      => 'Custom CSS',
+    'id'         => 'custom_css',
+    'name'       => 'custom_css',
+    'code_type'  => 'css',
+    'code_theme' => 'dracula',
+    'default'    => '',
+]
+```
+
+`code_type` accepts shorthand values like `css`, `js`, `javascript`, `php`, `html`, `json`, `scss`, and `markdown`, or a full MIME-style value like `text/css` or `application/x-httpd-php`.
+
+If you set `code_theme`, the helper only passes the theme name to CodeMirror. It does not enqueue the theme stylesheet for you. You can get the matching CodeMirror 5 theme CSS file from `https://github.com/codemirror/codemirror5/tree/master/theme`, add it to your plugin or theme, and enqueue it yourself:
+
+```php
+add_action( 'admin_enqueue_scripts', function() {
+    wp_enqueue_style(
+        'my-plugin-codemirror-theme',
+        plugins_url( 'assets/css/codemirror/dracula.css', __FILE__ ),
+        [ 'wp-codemirror' ],
+        false
+    );
+} );
 ```
 
 ## Sanitization and Validation

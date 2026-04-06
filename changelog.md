@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to `wp-settings` will be documented in this file
+## 1.1.3 - 2026-04-06
+
+- Added: code-editor field now supports custom code type and theme. Theme file is not provided though. You will need to add it yourself.
+
 ## 1.1.2 - 2026-03-26
 
 - Added: a new URL field type
