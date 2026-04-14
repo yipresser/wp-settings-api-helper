@@ -1,6 +1,9 @@
 # Changelog
 
 All notable changes to `wp-settings` will be documented in this file
+## 1.1.3.1 - 2026-04-14
+- Bug fix: check for field id before registering field.
+
 ## 1.1.3 - 2026-04-06
 
 - Added: code-editor field now supports custom code type and theme. Theme file is not provided though. You will need to add it yourself.

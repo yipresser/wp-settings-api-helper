@@ -10,7 +10,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 1.1.3
+ * @version 1.1.3.1
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -103,6 +103,9 @@ abstract class WP_Settings_API_Helper {
 				if ( ! empty( $section['fields'] ) && is_array( $section['fields'] ) ) {
 					$option = get_option( $section['option_name'], [] );
 					foreach ( $section['fields'] as $field ) {
+						if ( ! isset( $field['id'] ) || ! isset( $field['title'] ) ) {
+							continue;
+						}
 						$field['option_name'] = $section['option_name'];
 						$field['option']      = $option;
 						$extra                = [ 'field' => $field ];
