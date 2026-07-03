@@ -55,6 +55,11 @@ class My_Settings extends WP_Settings_API_Helper {
                 'description' => 'These are the general settings for the plugin.',
                 'menu_slug'   => 'my_plugin_slug', // Slug of the settings page
                 'option_name' => 'my_plugin_settings',
+                'args'        => [
+                    'before_section' => '<div class="%s">',
+                    'after_section'  => '</div>',
+                    'section_class'  => 'section-wrapper',
+                ],
                 'fields'      => [
                     [
                         'type'    => 'text',

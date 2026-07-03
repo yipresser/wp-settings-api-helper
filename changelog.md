@@ -2,6 +2,10 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 2.0.1 - 2026-07-03
+
+- Added: add_settings_section now support `args` field.
+
 ## 2.0.0 - 2026-06-25
 
 - Added: `color` field type — renders `<input type="color">` with default value support.

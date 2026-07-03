@@ -10,7 +10,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 2.0.0
+ * @version 2.0.1
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -47,6 +47,11 @@ abstract class WP_Settings_API_Helper {
 	 *  description => 'Description for the section',
 	 *  menu_slug => 'menu slug for registering section',
 	 *  option_name => 'the name of the variable to be saved to the Options database,
+	 *  args => [
+	 *    before_section,
+	 *    after_section,
+	 *    section_class,
+	 *  ],
 	 *  fields => [
 	 *      type => (text|url|number|email|hidden|select|checkbox|checkboxes|slider-checkbox|radio|textarea|password|dropdown_pages|color|range|image|code-editor|callback),
 	 *      title => 'Title for this field',
@@ -114,8 +119,9 @@ abstract class WP_Settings_API_Helper {
 		if ( ! empty( $this->settings_sections ) ) {
 			foreach ( $this->settings_sections as $section ) {
 				if ( isset( $section['id'] ) && isset( $section['title'] ) && isset( $section['menu_slug'] ) ) {
+					$section['args']                        = $this->sanitize_section_args( isset( $section['args'] ) && is_array( $section['args'] ) ? $section['args'] : [] );
 					$this->sections_by_id[ $section['id'] ] = $section;
-					add_settings_section( $section['id'], $section['title'], [ $this, 'render_section_description' ], $section['menu_slug'] );
+					add_settings_section( $section['id'], $section['title'], [ $this, 'render_section_description' ], $section['menu_slug'], $section['args'] );
 				}
 
 				if ( ! empty( $section['fields'] ) && is_array( $section['fields'] ) ) {
@@ -141,7 +147,7 @@ abstract class WP_Settings_API_Helper {
 		if ( $needs_media ) {
 			add_action(
 				'admin_enqueue_scripts',
-				function() {
+				function () {
 					wp_enqueue_media();
 				}
 			);
@@ -175,6 +181,50 @@ abstract class WP_Settings_API_Helper {
 	 * @return array
 	 */
 	abstract public function sanitize_settings( $option );
+
+
+	/**
+	 * Sanitize optional add_settings_section() wrapper args.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $args Section args.
+	 *
+	 * @return array
+	 */
+	private function sanitize_section_args( $args ) {
+		$args = wp_parse_args(
+			$args,
+			[
+				'before_section' => '',
+				'after_section'  => '',
+				'section_class'  => '',
+			]
+		);
+
+		$args['before_section'] = is_scalar( $args['before_section'] ) ? wp_kses_post( (string) $args['before_section'] ) : '';
+		$args['after_section']  = is_scalar( $args['after_section'] ) ? wp_kses_post( (string) $args['after_section'] ) : '';
+		$args['section_class']  = is_scalar( $args['section_class'] ) ? $this->sanitize_html_class_list( (string) $args['section_class'] ) : '';
+
+		return $args;
+	}
+
+	/**
+	 * Sanitize a whitespace-separated HTML class list.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param string $class_list HTML class list.
+	 *
+	 * @return string
+	 */
+	private function sanitize_html_class_list( $class_list ) {
+		$classes = preg_split( '/\s+/', $class_list );
+		$classes = array_map( 'sanitize_html_class', $classes );
+		$classes = array_filter( $classes, 'strlen' );
+
+		return implode( ' ', array_unique( $classes ) );
+	}
 
 
 	/**
