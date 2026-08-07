@@ -2,6 +2,11 @@
 
 All notable changes to `wp-settings` will be documented in this file
 
+## 2.0.2 - 2026-08-07
+
+- Added: optional `option_value` support in `$settings_options`, allowing clients to supply a complete option array when rendering fields.
+- Compatibility: settings without `option_value` continue loading their values with `get_option()`.
+
 ## 2.0.1 - 2026-07-03
 
 - Added: add_settings_section now support `args` field.

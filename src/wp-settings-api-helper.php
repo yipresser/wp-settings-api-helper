@@ -10,7 +10,7 @@ namespace Yipresser\WpSettingsApiHelper;
 /**
  * Yipresser WP Settings API Helper abstract class
  *
- * @version 2.0.1
+ * @version 2.0.2
  *
  * @author Damien Oh <damien@yipresser.com>
  */
@@ -26,6 +26,7 @@ abstract class WP_Settings_API_Helper {
 	 * @usage $settings_options = [[
 	 *                              'option_group',
 	 *                              'option_name',
+	 *                              'option_value' => [],
 	 *                              'default'=>[] //default values for the option
 	 *                          ],
 	 *                           ];
@@ -103,10 +104,18 @@ abstract class WP_Settings_API_Helper {
 	 */
 	public function setup() {
 		$this->sections_by_id = [];
+		$option_values        = [];
 
 		// first, register setting.
 		if ( ! empty( $this->settings_options ) ) {
 			foreach ( $this->settings_options as $option ) {
+				if (
+					isset( $option['option_name'] )
+					&& array_key_exists( 'option_value', $option )
+					&& is_array( $option['option_value'] )
+				) {
+					$option_values[ $option['option_name'] ] = $option['option_value'];
+				}
 				if ( ! isset( $option['args'] ) || ! is_array( $option['args'] ) ) {
 					$option['args'] = [ 'sanitize_callback' => [ $this, 'sanitize_settings' ] ];
 				}
@@ -125,7 +134,9 @@ abstract class WP_Settings_API_Helper {
 				}
 
 				if ( ! empty( $section['fields'] ) && is_array( $section['fields'] ) ) {
-					$option = get_option( $section['option_name'], [] );
+					$option = array_key_exists( $section['option_name'], $option_values )
+						? $option_values[ $section['option_name'] ]
+						: get_option( $section['option_name'], [] );
 					foreach ( $section['fields'] as $field ) {
 						if ( ! isset( $field['id'] ) || ! isset( $field['title'] ) ) {
 							continue;

@@ -42,6 +42,8 @@ class My_Settings extends WP_Settings_API_Helper {
             [
                 'option_group' => 'my_plugin_settings_group',
                 'option_name'  => 'my_plugin_settings',
+                // Optionally supply an already resolved option array:
+                // 'option_value' => $this->options,
                 // Optional args for register_setting():
                 // 'args' => [ 'sanitize_callback' => [$this, 'sanitize_settings'] ]
             ]
@@ -103,6 +105,25 @@ class My_Settings extends WP_Settings_API_Helper {
     }
 }
 ```
+
+### Supplying Resolved Option Values
+
+By default, the helper loads each section's values from WordPress using the section's `option_name`. If a client has already resolved an option array, including module-level defaults, it can pass that array through `option_value`:
+
+```php
+$this->settings_options = [
+    [
+        'option_group' => 'my_plugin_settings_group',
+        'option_name'  => 'my_plugin_settings',
+        'option_value' => $this->options,
+        'args'         => [
+            'sanitize_callback' => [ $this, 'sanitize_settings' ],
+        ],
+    ],
+];
+```
+
+The supplied array is used by every settings section with the matching `option_name`. Other options managed by the same settings class continue loading their own values from the WordPress database. An explicitly supplied empty array is also respected. Existing clients that omit `option_value` retain the original `get_option()` behavior.
 
 ### 2. Display the Settings Form
 
